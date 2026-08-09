@@ -1,5 +1,5 @@
 ---
-title: "MyLabJournal"
+title: "William Loving"
 output: html_document
 ---
 
@@ -17,27 +17,16 @@ output: html_document
 <div class="row" style="padding-top: 30px;">
 <div class="col-sm-6">
 
-# **My Lab Journal**
+# **William Loving**
 
-This is a template example for lab journaling. Students in Matt Crump's Human Cognition and Performance Lab will use this template to learn R, and other things. Students can replace this text with more fun things. People not in my lab can use this too.
-
-## How to use
-
-1. fork the repo for this website and follow instructions on read me to get set up. [https://github.com/CrumpLab/LabJournalWebsite](https://github.com/CrumpLab/LabJournalWebsite)
-
-2. Blog/journal what you are doing in R, by editing the Journal.Rmd. See the [Journal page](https://crumplab.github.io/LabJournalWebsite/Journal.html) for an example of what to do to get started learning R.
-
-3. See the [links page](https://crumplab.github.io/LabJournalWebsite/Links.html) for lots of helpful links on learning R.
-
-4. Change everything to make it your own.
-
+As a second‑year student pursuing degrees in Statistics and Sustainability at the University of Florida, I am passionate about renewable energy, data analytics in the natural world, and resilient infrastructure in the face of climate change. Additionally, a devotion to the upholding of social and cultural sustainability weaves these interests together. While studying for both degrees, I am completing coursework for the University of Florida’s Artificial Intelligence Certificate and LEED Green Associate certification.
 
 </div>
 <div class="col-sm-6">
 
-### [Crump Lab: Human Cognition and Performance](https://crumplab.github.io)
+<center>
+<img src="C:\Users\wplov\OneDrive\Documents\Internship Applications\00. Misc\Headshot_Resize.png" style="border-radius:50%; width:300px; height:300px; margin-top:50px;"/>
+</center>
 
-<a href = "https://crumplab.github.io">
-![](images/logo.png)
 </a>
 </div>
