@@ -19,13 +19,17 @@ output: html_document
 
 # **William Loving**
 
-As a second‑year student pursuing degrees in Statistics and Sustainability at the University of Florida, I am passionate about renewable energy, data analytics in the natural world, and resilient infrastructure in the face of climate change. Additionally, a devotion to the upholding of social and cultural sustainability weaves these interests together. While studying for both degrees, I am completing coursework for the University of Florida’s Artificial Intelligence Certificate and LEED Green Associate certification.
+Hello & Welcome to my Website!
+
+As a student pursuing degrees in Sustainability and Statistics, I am interested in working where climate technology, infrastructure, and data intersect.
+
+I am currently an undergraduate research assistant at the University of Florida's College of Design, Construction, and Planning, conducting research with the [People and Everyday Nature (PEN) Lab](https://jiayangli.owlstown.net/people). Here, I use R to analyze, clean, and test survey and eye-tracking data about Green Stormwater Infrastructure (GSI). I am also a 2026 Florida Climate Institute Student Fellow, where I am conducting my own research project about the equity of GSI in Alachua County, Gainesville. I use ArcGIS to map GSI locations, EPA stormwater regions, census data, and flood‑vulnerable locations using Esri shapefiles. Both of these roles have allowed me to grow stronger in R, Python, and GIS.
 
 </div>
 <div class="col-sm-6">
 
 <center>
-<img src="C:\Users\wplov\OneDrive\Documents\Internship Applications\00. Misc\Headshot_Resize.png" style="border-radius:50%; width:300px; height:300px; margin-top:50px;"/>
+<img src="C:\Users\wplov\Python\LabJournalWebsite\images\Headshot - Copy.jpg" style="border-radius:50%; width:300px; height:300px; margin-top:50px;"/>
 </center>
 
 </a>
