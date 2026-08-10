@@ -1,9 +1,0 @@
----
-title: "Resume"
-output: html_document
----
-
-```{r, echo = F, out.width='100%'}
-knitr::include_graphics("C:/Users/wplov/Python/LabJournalWebsite/Resume - William Loving.pdf")
-```
-
