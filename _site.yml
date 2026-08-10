@@ -6,6 +6,4 @@ navbar:
       href: index.html
     - text: "Projects"
       href: Projects.html
-    - text: "Resume"
-      href: Links.html
 output_dir: "docs"
