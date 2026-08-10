@@ -1,0 +1,134 @@
+---
+title: "Projects"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    collapsed: false
+    number_sections: false
+    toc_depth: 1
+    #code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
+```
+
+```python
+# Sun Belt Solar Energy Analysis
+# Author: William Loving
+# Data Source: U.S. Energy Information Administration (EIA)
+
+import os
+import requests  # type: ignore
+import pandas as pd
+import matplotlib.pyplot as plt
+from dotenv import load_dotenv  # type: ignore
+
+load_dotenv()
+
+API_KEY = os.environ.get("EIA_API_KEY")
+
+if not API_KEY:
+    raise ValueError("EIA_API_KEY environment variable not set. See README for setup.")
+
+# EIA's Electricty Generation Data
+url = "https://api.eia.gov/v2/electricity/electric-power-operational-data/data/"
+
+# Comparing states in the U.S. Sun Belt region
+states = ["FL", "TX", "CA", "AZ"]
+state_names = {"FL": "Florida", "TX": "Texas", "CA": "California", "AZ": "Arizona"}
+colors = {"FL": "#319941", "TX": "#D0D76D", "CA": "#1C618F", "AZ": "#E168C3"}
+
+all_states = []
+
+# Filtering by solar generation, annual data, and the Sun Belt States
+for state in states:
+    params = {
+        "api_key": API_KEY,
+        "frequency": "annual",         
+        "data[0]": "generation",
+        "facets[fueltypeid][]": "SUN",
+        "facets[location][]": state,
+        "start": "2015",
+        "end": "2024",
+        "sort[0][column]": "period",
+        "sort[0][direction]": "asc",
+        "length": "500",
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code != 200:
+        print(f"Failed to fetch {state}: {response.status_code}")
+        print(response.text)
+        continue
+
+    raw = response.json()
+    data = raw["response"]["data"]
+    state_df = pd.DataFrame(data)
+    state_df = state_df[state_df["sectorid"] == "99"]
+    all_states.append(state_df)
+    print(f"Fetched {state} successfully")
+
+solar_gen = pd.concat(all_states, ignore_index=True)
+
+# Cleaning!
+solar_gen = solar_gen.rename(columns={
+    "period": "year",
+    "generation": "generation_mwh",
+    "location": "state"
+})
+
+# Converting the year and generation (in megawatt-hours) to numeric
+solar_gen["year"] = pd.to_numeric(solar_gen["year"])
+solar_gen["generation_mwh"] = pd.to_numeric(solar_gen["generation_mwh"])
+
+# Grouping by year and state
+solar_gen = solar_gen.groupby(["year", "state"], as_index=False)["generation_mwh"].sum()
+solar_gen["generation_twh"] = solar_gen["generation_mwh"] / 1000
+
+# Four subplots because of scale differences
+fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex=True)
+axes = axes.flatten()  
+
+for ax, state in zip(axes, states):
+    state_data = solar_gen[solar_gen["state"] == state]
+    ax.bar(
+        state_data["year"],
+        state_data["generation_twh"],
+        color=colors[state],
+        edgecolor="white",
+        linewidth=0.5
+    )
+    ax.plot(
+        state_data["year"],
+        state_data["generation_twh"],
+        color="#000000",
+        linewidth=1.5,
+        marker="o",
+        markersize=4
+    )
+    ax.set_title(state_names[state], fontsize=13, fontweight="bold")
+    ax.set_ylabel("Generation (TWh)", fontsize=10)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.tick_params(axis="x", rotation=45)
+
+fig.suptitle(
+    "Sun Belt Solar Energy Generation by State (2015–2024)",
+    fontsize=16,
+    fontweight="bold"
+)
+
+plt.tight_layout()
+plt.show()
+
+# Save combined dataset for reuse
+solar_gen[["year", "state", "generation_twh"]].to_csv("sunbelt_solar_data.csv", index=False)
+
+```
+
+<center>
+<img src="C:\Users\wplov\Python\LabJournalWebsite\images\Sunbelt Solar Growth Comparison.png" style="border-radius:50%; width:300px; height:300px; margin-top:50px;"/>
+</center>
