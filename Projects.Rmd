@@ -134,7 +134,7 @@ solar_gen[["year", "state", "generation_twh"]].to_csv("sunbelt_solar_data.csv", 
 ```
 ### Findings
 
-California led all four states in electricity generation, reaching up to 50 terawatt-hours (TWh) by 2024. Texas was a close second with 40 TWh. From the graph, it appears that Texas and Florida had the largest leaps in growth, while Arizona has had the slowest growth.
+California led all four states in electricity generation, reaching roughly 50 Terawatt-hours (TWh) by 2024. Texas was a close second with approximately 40 TWh. From the graph, it appears that Texas and Florida had the largest leaps in growth, while Arizona has had the slowest growth. Arizona's decline in slope aligns with strict policy changes on rooftop solar.
 
 ```{r, echo = F, fig.height=6, fig.width=10, fig.align='center'}
 knitr::include_graphics("C:/Users/wplov/Python/LabJournalWebsite/images/Sunbelt Solar Growth Comparison.png")
@@ -175,9 +175,11 @@ print(growth_df)
 
 ```{r growth-table, echo = F}
 library(knitr)
-growth <- read.csv("C:/Users/wplov/Python/sunbelt_solar_growth.csv")
+growth <- read.csv("C:/Users/wplov/Python/LabJournalWebsite/sunbelt_solar_growth.csv")
 kable(growth,
       col.names = c("State", "Slope (TWh/yr)", "% Growth (2015–2024)", "CAGR (%)"),
       align = "c")
 ```
-Here, we can see that Texas had the greatest growth relative to its starting point in solar power generation from 2015 to 2024, with a compound annual growth rate (CAGR) of 67%. While California leads the four states in solar generation quantities, Texas has experienced the most growth. This is relevant to the future of solar in the United States. With similar policies to California's current clean-energy mandates, Texas could surpass California in solar generation.
+Here, we can see that Texas had the greatest growth relative to its starting point in solar power generation from 2015 to 2024, with a compound annual growth rate (CAGR) of 67.0%. While California leads the four states in solar generation quantities, Texas has experienced the most growth.If Texas continues growing at this rate and improves their clean-energy policies, the difference between Texas and California could significantly narrow. However, it is important to note that having a larger CAGR does not imply these states are performing better than California. Due to California's larger starting point, their CAGR is naturally lower despite having more growth in solar generation.
+
+Florida's CAGR (63.5%) is only 3.5% behind Texas', which reflects recent investments into Florida Power & Light (FP&L). Having worked alongside FP&L as a client on a solar site, I have seen firsthand the pace and processes associated with recent trends in solar growth in Florida. While California's CAGR (14.1%) is low compared to Florida and Texas, they did start at a large generation of 14.81 TWh, whereas Florida just surpassed that level in 2023.
