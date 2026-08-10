@@ -29,7 +29,7 @@ I am currently an undergraduate research assistant at the University of Florida'
 <div class="col-sm-6">
 
 <center>
-<img src="C:\Users\wplov\Python\LabJournalWebsite\images\Headshot - Copy.jpg" style="border-radius:50%; width:300px; height:300px; margin-top:50px;"/>
+<img src="C:\Users\wplov\Python\images\Headshot - Copy.jpg" style="border-radius:50%; width:300px; height:300px; margin-top:50px;"/>
 </center>
 
 </a>

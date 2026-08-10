@@ -16,11 +16,11 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 
 # Solar Power along the Sun Belt (2015-2024)
 
-This project was an independent endeavor in order to determine the growth of solar power over time in four major states along the Sun Belt: California, Arizona, Texas, and Florida.
+This project was an independent endeavor in order to determine the growth of solar power over time in four major states along the Sun Belt: California, Arizona, Texas, and Florida. These states rank top four in the United States solar industry.
 
-This project aimed to examine how the different contexts of each state (size, policy, or location) impact the growth of the solar industry over the past decade. 
+This project aimed to examine how the different contexts of each state (size, policy, or location) impact the growth of the solar industry over the past decade.
 
-I pulled data from the a public API from the U.S. Energy Information Administration (EIA) from 2015 until 2024. Using Python to clean and filter the data with pandas, I created a plot-by-plot comparison of the four states. I chose to separate the four states rather than keep them in the same plot because of California's overwhelming advantage over the others in terms of Megawatt-hours generation.
+I pulled data from a public API within the U.S. Energy Information Administration (EIA) from 2015 until 2024. Using Python to clean and filter the data with pandas, I created a plot-by-plot comparison of the four states. I chose to separate the four states rather than keep them in the same plot because of California's overwhelming advantage over the others in terms of Megawatt-hours generation. This is likely due to the sunshine received and climate policies in place. I also created a table comparing each states slope and compound annual growth rate.
 
 
 ```python
@@ -131,11 +131,53 @@ plt.show()
 
 # Save combined dataset for reuse
 solar_gen[["year", "state", "generation_twh"]].to_csv("sunbelt_solar_data.csv", index=False)
-
 ```
+### Findings
 
+California led all four states in electricity generation, reaching up to 50 terawatt-hours (TWh) by 2024. Texas was a close second with 40 TWh. From the graph, it appears that Texas and Florida had the largest leaps in growth, while Arizona has had the slowest growth.
 
 ```{r, echo = F, fig.height=6, fig.width=10, fig.align='center'}
 knitr::include_graphics("C:/Users/wplov/Python/LabJournalWebsite/images/Sunbelt Solar Growth Comparison.png")
 ```
+```python
+import numpy as np
 
+results = []
+
+for state in states:
+    state_data = solar_gen[solar_gen["state"] == state].sort_values("year")
+    
+    years = state_data["year"].values
+    values = state_data["generation_twh"].values
+
+    slope, intercept = np.polyfit(years, values, 1)
+
+    # Percent growth from first year to last year
+    start_val = values[0]
+    end_val = values[-1]
+    pct_growth = ((end_val - start_val) / start_val) * 100
+    
+    # CAGR - compound annual growth rate metrics to see which state grew the fastest
+    num_years = years[-1] - years[0]
+    cagr = ((end_val / start_val) ** (1 / num_years) - 1) * 100
+    
+    results.append({
+        "state": state_names[state],
+        "slope_twh_per_year": round(slope, 3),
+        "pct_growth": round(pct_growth, 1),
+        "cagr_pct": round(cagr, 1)
+    })
+
+growth_df = pd.DataFrame(results)
+growth_df = growth_df.sort_values("cagr_pct", ascending=False)
+print(growth_df)
+```
+
+```{r growth-table, echo = F}
+library(knitr)
+growth <- read.csv("C:/Users/wplov/Python/sunbelt_solar_growth.csv")
+kable(growth,
+      col.names = c("State", "Slope (TWh/yr)", "% Growth (2015–2024)", "CAGR (%)"),
+      align = "c")
+```
+Here, we can see that Texas had the greatest growth relative to its starting point in solar power generation from 2015 to 2024, with a compound annual growth rate (CAGR) of 67%. While California leads the four states in solar generation quantities, Texas has experienced the most growth. This is relevant to the future of solar in the United States. With similar policies to California's current clean-energy mandates, Texas could surpass California in solar generation.

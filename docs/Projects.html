@@ -321,10 +321,8 @@ div.tocify {
         <li>
   <a href="index.html">Home</a>
 </li>
-</li>
 <li>
   <a href="Projects.html">Projects</a>
-</li>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -348,16 +346,19 @@ class="section level1">
 <h1>Solar Power along the Sun Belt (2015-2024)</h1>
 <p>This project was an independent endeavor in order to determine the
 growth of solar power over time in four major states along the Sun Belt:
-California, Arizona, Texas, and Florida.</p>
+California, Arizona, Texas, and Florida. These states rank top four in
+the United States solar industry.</p>
 <p>This project aimed to examine how the different contexts of each
 state (size, policy, or location) impact the growth of the solar
 industry over the past decade.</p>
-<p>I pulled data from the a public API from the U.S. Energy Information
+<p>I pulled data from a public API within the U.S. Energy Information
 Administration (EIA) from 2015 until 2024. Using Python to clean and
 filter the data with pandas, I created a plot-by-plot comparison of the
 four states. I chose to separate the four states rather than keep them
 in the same plot because of California’s overwhelming advantage over the
-others in terms of Megawatt-hours generation.</p>
+others in terms of Megawatt-hours generation. This is likely due to the
+sunshine received and climate policies in place. I also created a table
+comparing each states slope and compound annual growth rate.</p>
 <pre class="python"><code>import os
 import requests  # type: ignore
 import pandas as pd
@@ -464,9 +465,89 @@ plt.tight_layout()
 plt.show()
 
 # Save combined dataset for reuse
-solar_gen[[&quot;year&quot;, &quot;state&quot;, &quot;generation_twh&quot;]].to_csv(&quot;sunbelt_solar_data.csv&quot;, index=False)
-</code></pre>
+solar_gen[[&quot;year&quot;, &quot;state&quot;, &quot;generation_twh&quot;]].to_csv(&quot;sunbelt_solar_data.csv&quot;, index=False)</code></pre>
+<div id="findings" class="section level3">
+<h3>Findings</h3>
+<p>California led all four states in electricity generation, reaching up
+to 50 terawatt-hours (TWh) by 2024. Texas was a close second with 40
+TWh. From the graph, it appears that Texas and Florida had the largest
+leaps in growth, while Arizona has had the slowest growth.</p>
 <p><img src="images/Sunbelt%20Solar%20Growth%20Comparison.png" alt="" width="600" style="display: block; margin: auto;" /></p>
+<pre class="python"><code>import numpy as np
+
+results = []
+
+for state in states:
+    state_data = solar_gen[solar_gen[&quot;state&quot;] == state].sort_values(&quot;year&quot;)
+    
+    years = state_data[&quot;year&quot;].values
+    values = state_data[&quot;generation_twh&quot;].values
+
+    slope, intercept = np.polyfit(years, values, 1)
+
+    # Percent growth from first year to last year
+    start_val = values[0]
+    end_val = values[-1]
+    pct_growth = ((end_val - start_val) / start_val) * 100
+    
+    # CAGR - compound annual growth rate metrics to see which state grew the fastest
+    num_years = years[-1] - years[0]
+    cagr = ((end_val / start_val) ** (1 / num_years) - 1) * 100
+    
+    results.append({
+        &quot;state&quot;: state_names[state],
+        &quot;slope_twh_per_year&quot;: round(slope, 3),
+        &quot;pct_growth&quot;: round(pct_growth, 1),
+        &quot;cagr_pct&quot;: round(cagr, 1)
+    })
+
+growth_df = pd.DataFrame(results)
+growth_df = growth_df.sort_values(&quot;cagr_pct&quot;, ascending=False)
+print(growth_df)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">State</th>
+<th align="center">Slope (TWh/yr)</th>
+<th align="center">% Growth (2015–2024)</th>
+<th align="center">CAGR (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Texas</td>
+<td align="center">4.206</td>
+<td align="center">10020.5</td>
+<td align="center">67.0</td>
+</tr>
+<tr class="even">
+<td align="center">Florida</td>
+<td align="center">2.046</td>
+<td align="center">8228.0</td>
+<td align="center">63.5</td>
+</tr>
+<tr class="odd">
+<td align="center">California</td>
+<td align="center">3.368</td>
+<td align="center">226.9</td>
+<td align="center">14.1</td>
+</tr>
+<tr class="even">
+<td align="center">Arizona</td>
+<td align="center">0.654</td>
+<td align="center">213.0</td>
+<td align="center">13.5</td>
+</tr>
+</tbody>
+</table>
+<p>Here, we can see that Texas had the greatest growth relative to its
+starting point in solar power generation from 2015 to 2024, with a
+compound annual growth rate (CAGR) of 67%. While California leads the
+four states in solar generation quantities, Texas has experienced the
+most growth. This is relevant to the future of solar in the United
+States. With similar policies to California’s current clean-energy
+mandates, Texas could surpass California in solar generation.</p>
+</div>
 </div>
 
 
