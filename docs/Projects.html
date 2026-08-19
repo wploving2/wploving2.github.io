@@ -362,11 +362,16 @@ in the same plot because of California’s overwhelming advantage over the
 others in terms of Megawatt-hours generation. This is likely due to the
 sunshine received and climate policies in place. I also created a table
 comparing each states slope and compound annual growth rate.</p>
-<pre class="python"><code>import os
+<pre class="python"><code># Sun Belt Solar Energy Analysis
+# Author: William Loving
+# Data Source: U.S. Energy Information Administration (EIA)
+
+import os
 import requests  # type: ignore
 import pandas as pd
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv  # type: ignore
+import sqlite3
 
 load_dotenv()
 
@@ -385,7 +390,7 @@ colors = {&quot;FL&quot;: &quot;#319941&quot;, &quot;TX&quot;: &quot;#D0D76D&quo
 
 all_states = []
 
-# Filtering by solar generation, annual data, and the Sun Belt States
+# Filtering by solar generation, annual data, and the Sun Belt States.
 for state in states:
     params = {
         &quot;api_key&quot;: API_KEY,
@@ -431,6 +436,30 @@ solar_gen[&quot;generation_mwh&quot;] = pd.to_numeric(solar_gen[&quot;generation
 solar_gen = solar_gen.groupby([&quot;year&quot;, &quot;state&quot;], as_index=False)[&quot;generation_mwh&quot;].sum()
 solar_gen[&quot;generation_twh&quot;] = solar_gen[&quot;generation_mwh&quot;] / 1000
 
+# Loading data into SQLite database
+conn = sqlite3.connect(&quot;solar_energy.db&quot;)
+solar_gen.to_sql(&quot;solar_generation&quot;, conn, if_exists=&quot;replace&quot;, index=False)
+
+# Top 5 solar generation states in the Sun Belt Region
+query1 = &quot;&quot;&quot;
+    SELECT state, year, generation_twh
+    FROM solar_generation
+    ORDER BY generation_twh DESC
+    LIMIT 5
+&quot;&quot;&quot;
+
+print(pd.read_sql_query(query1, conn))
+
+# Total solar generation across all years for each state
+query2 = &quot;&quot;&quot;
+    SELECT state, ROUND(SUM(generation_twh), 2) AS total_twh
+    FROM solar_generation
+    GROUP BY state
+    ORDER BY total_twh DESC
+&quot;&quot;&quot;
+
+print(pd.read_sql_query(query2, conn))
+
 # Four subplots because of scale differences
 fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex=True)
 axes = axes.flatten()  
@@ -465,10 +494,7 @@ fig.suptitle(
 )
 
 plt.tight_layout()
-plt.show()
-
-# Save combined dataset for reuse
-solar_gen[[&quot;year&quot;, &quot;state&quot;, &quot;generation_twh&quot;]].to_csv(&quot;sunbelt_solar_data.csv&quot;, index=False)</code></pre>
+plt.show()</code></pre>
 <div id="findings" class="section level3">
 <h3>Findings</h3>
 <p>California led all four states in electricity generation, reaching
