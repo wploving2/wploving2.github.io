@@ -24,11 +24,16 @@ I pulled data from a public API within the U.S. Energy Information Administratio
 
 
 ```python
+# Sun Belt Solar Energy Analysis
+# Author: William Loving
+# Data Source: U.S. Energy Information Administration (EIA)
+
 import os
 import requests  # type: ignore
 import pandas as pd
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv  # type: ignore
+import sqlite3
 
 load_dotenv()
 
@@ -47,7 +52,7 @@ colors = {"FL": "#319941", "TX": "#D0D76D", "CA": "#1C618F", "AZ": "#E168C3"}
 
 all_states = []
 
-# Filtering by solar generation, annual data, and the Sun Belt States
+# Filtering by solar generation, annual data, and the Sun Belt States.
 for state in states:
     params = {
         "api_key": API_KEY,
@@ -93,6 +98,30 @@ solar_gen["generation_mwh"] = pd.to_numeric(solar_gen["generation_mwh"])
 solar_gen = solar_gen.groupby(["year", "state"], as_index=False)["generation_mwh"].sum()
 solar_gen["generation_twh"] = solar_gen["generation_mwh"] / 1000
 
+# Loading data into SQLite database
+conn = sqlite3.connect("solar_energy.db")
+solar_gen.to_sql("solar_generation", conn, if_exists="replace", index=False)
+
+# Top 5 solar generation states in the Sun Belt Region
+query1 = """
+    SELECT state, year, generation_twh
+    FROM solar_generation
+    ORDER BY generation_twh DESC
+    LIMIT 5
+"""
+
+print(pd.read_sql_query(query1, conn))
+
+# Total solar generation across all years for each state
+query2 = """
+    SELECT state, ROUND(SUM(generation_twh), 2) AS total_twh
+    FROM solar_generation
+    GROUP BY state
+    ORDER BY total_twh DESC
+"""
+
+print(pd.read_sql_query(query2, conn))
+
 # Four subplots because of scale differences
 fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex=True)
 axes = axes.flatten()  
@@ -128,9 +157,6 @@ fig.suptitle(
 
 plt.tight_layout()
 plt.show()
-
-# Save combined dataset for reuse
-solar_gen[["year", "state", "generation_twh"]].to_csv("sunbelt_solar_data.csv", index=False)
 ```
 ### Findings
 
